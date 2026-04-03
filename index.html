@@ -1,59 +1,88 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>舆图志·坊间徽州</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="texture-overlay"></div>
+
     <div class="app-container">
         
         <main class="map-container">
             <header class="map-header">
-                <h1>舆图志·坊间徽州</h1>
+                <img class="header-seal" src="./seal/hui.png" alt="徽">
+                <div class="header-titles">
+                    <h1>舆图志·坊间徽州</h1>
+                    <p class="subtitle">An Architectural Atlas of Ancient Huizhou</p>
+                </div>
             </header>
             
             <div id="svg-wrapper"></div>
+        </main>
 
-            <div class="intro-text">
+        <aside class="right-panel">
+            <div id="intro-section" class="intro-text">
                 <p>古徽州的建筑，并非散落于群山间的偶然。</p>
                 <p>从理水的村落到跨江的廊桥，从高耸的马头墙到森严的宗祠，</p>
-                <p>它们是古代先民面对皖南复杂的水土环境、宗族礼制与商业网络时，</p>
+                <p>它们是古代先民面对皖南复杂的水土环境、</p>
+                <p>宗族礼制与商业网络时，</p>
                 <p>所演算出的一套极其精密的空间算法与生存图谱。</p>
             </div>
 
             <div id="info-card" class="info-card hidden">
-                <button id="close-btn" class="close-btn">✕</button>
-                <div class="card-image-placeholder">
-                    <span>建筑线稿图区</span>
+                <button id="close-btn" class="close-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                
+                <div class="card-header">
+                    <img id="card-county-seal" src="" alt="县印" style="width: 36px; height: 36px; object-fit: contain; border-radius: 2px; opacity: 0.9;">
+                    <div class="card-titles">
+                        <h2 id="card-title">歙县·徽州府衙</h2>
+                        <p id="card-subtitle">Huizhou Prefecture Yamen</p>
+                    </div>
                 </div>
+
+                <div class="card-image-placeholder">
+                    <div class="placeholder-ink-graphic">
+                        <svg viewBox="0 0 100 100" class="ink-icon"><path d="M10 80 L50 20 L90 80 Z" fill="none" stroke="#666" stroke-width="2"/></svg>
+                        <span>建筑形制线稿</span>
+                    </div>
+                </div>
+                
                 <div class="card-content">
-                    <h2 id="card-title">休宁·承启堂</h2>
-                    <p id="card-subtitle">Chengqi Hall, Xiuning</p>
-                    <div class="text-lines">
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line short"></div>
+                    <div class="content-meta">
+                        <span class="meta-item"><strong>营造年代：</strong><span id="card-dynasty">明弘治年间</span></span>
+                        <span class="meta-item"><strong>营造流派：</strong>徽派传统</span>
+                    </div>
+                    <p id="card-desc" class="card-desc">依山就势，粉墙黛瓦。这不仅是建筑，更是文化...</p>
+                    
+                    <div class="data-vis-placeholder">
+                        <div class="data-title">木石砖雕四雕工艺与材质比重</div>
+                        <div class="bar-chart">
+                            <div class="bar-row"><span class="label">木雕</span><div class="bar-track"><div class="bar-fill" style="width: 70%;"></div></div></div>
+                            <div class="bar-row"><span class="label">石雕</span><div class="bar-track"><div class="bar-fill" style="width: 40%;"></div></div></div>
+                            <div class="bar-row"><span class="label">砖雕</span><div class="bar-track"><div class="bar-fill" style="width: 25%;"></div></div></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
-
-        <aside class="sidebar">
-            <div class="search-box">搜索建筑或地点...</div>
-            <nav class="nav-tabs">
-                <button class="active">全部 / All</button>
-                <button>民居 / Residences</button>
-                <button>宗祠 / Ancestral Halls</button>
-                <button>桥梁 / Bridges</button>
-                <button>古道 / Ancient Trails</button>
-            </nav>
         </aside>
 
+        <aside class="sidebar-nav">
+            <nav class="nav-tabs">
+                <button class="active">全览<span class="eng">ALL</span></button>
+                <button>民居<span class="eng">RESIDENCE</span></button>
+                <button>官衙<span class="eng">OFFICE</span></button>
+                <button>桥梁<span class="eng">BRIDGE</span></button>
+            </nav>
+        </aside>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

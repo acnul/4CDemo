@@ -1,4 +1,4 @@
-const coreRegionsConfig = {
+﻿const coreRegionsConfig = {
     "shexian": { name: "歙县" },
     "xiuning": { name: "休宁" },
     "yixian":  { name: "黟县" },
@@ -7,17 +7,54 @@ const coreRegionsConfig = {
     "qimen":   { name: "祁门" }
 };
 
+// 周边地区数据
+const contextRegionsConfig = {
+    "quzhou": { name: "衢州府" },
+    "yanzhou": { name: "严州府" },
+    "hangzhou": { name: "杭州府" },
+    "ningguo": { name: "宁国府" },
+    "guangxin": { name: "广信府" },
+    "chizhou": { name: "池州府" },
+    "raozhou": { name: "饶州府" }
+};
+
+// 预构件数据，模拟方案中的 JSON 结构
 const huizhouData = {
-    "shexian": { title: "歙县·徽州府衙", subtitle: "Huizhou Prefecture Yamen, Shexian" },
-    "xiuning": { title: "休宁·承启堂", subtitle: "Chengqi Hall, Xiuning" },
-    "yixian":  { title: "黟县·宏村", subtitle: "Hongcun Village, Yixian" },
-    "jixi":    { title: "绩溪·胡氏宗祠", subtitle: "Hu Family Ancestral Hall, Jixi" },
-    "wuyuan":  { title: "婺源·篁岭", subtitle: "Huangling, Wuyuan" },
-    "qimen":   { title: "祁门·古戏台", subtitle: "Ancient Stage, Qimen" }
+    "shexian": { 
+        title: "歙县·徽州府衙", subtitle: "Huizhou Prefecture Yamen", seal: "官衙", 
+        dynasty: "明弘治年间", desc: "依山就势，粉墙黛瓦。建筑群采用轴线对称布局，展现了古代徽州成熟的砖木结构技艺，以及森严的封建礼制思想。作为古徽州的政治中心，其仪门、大堂等建筑保留了原汁原味的官式营造特征。",
+        chart: [50, 30, 20]
+    },
+    "xiuning": { 
+        title: "休宁·承启堂", subtitle: "Chengqi Hall, Xiuning", seal: "民居", 
+        dynasty: "清乾隆年间", desc: "位于黄村，是典型的徽派古民居。宅内四水归堂的布局巧妙调和了采光与风水，精美的木雕牛腿讲述着休宁商人“贾而好儒”的历史渊源。",
+        chart: [70, 20, 10]
+    },
+    "yixian":  { 
+        title: "黟县·宏村月沼", subtitle: "Moon Lake, Hongcun Village", seal: "民居", 
+        dynasty: "明永乐年间", desc: "宏村的牛形水系工程是徽州先民理水的巅峰之作。月沼作为半月形的中心水池，四周马头墙倒映水中，展现了中国传统“天人合一”的审美意境。",
+        chart: [60, 25, 15]
+    },
+    "jixi":    { 
+        title: "绩溪·胡氏宗祠", subtitle: "Hu Family Ancestral Hall", seal: "宗祠", 
+        dynasty: "明嘉靖年间", desc: "以木雕艺术闻名于世，被称为“木雕艺术博物馆”。其门楼、享堂及寝室的构件雕琢细腻，不仅是宗族礼制的空间载体，也是徽派雕刻技艺的集大成者。",
+        chart: [85, 10, 5]
+    },
+    "wuyuan":  { 
+        title: "婺源·彩虹桥", subtitle: "Rainbow Bridge, Wuyuan", seal: "桥梁", 
+        dynasty: "南宋", desc: "古徽州最古老、最长的廊桥。建于清水的清华村，采用半船形桥墩设计以减轻洪水冲击，体现了极高的实用主义与古典结构美学的结合。",
+        chart: [40, 0, 60] // 木、砖、石
+    },
+    "qimen":   { 
+        title: "祁门·古戏台", subtitle: "Ancient Stage, Qimen", seal: "宗祠", 
+        dynasty: "明清时期", desc: "散落于祁门各村落的古戏台，通常与宗祠结合。它们不仅是祭祀与娱乐的中心，其华丽的藻井和出挑的飞檐，正是徽派建筑极致繁华的缩影。",
+        chart: [75, 15, 10]
+    }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
     const svgWrapper = document.getElementById("svg-wrapper");
+    const introSection = document.getElementById("intro-section");
     const infoCard = document.getElementById("info-card");
     const closeBtn = document.getElementById("close-btn");
 
@@ -28,138 +65,149 @@ document.addEventListener("DOMContentLoaded", () => {
             const svgElement = svgWrapper.querySelector('svg');
             
             if(svgElement) {
-                // 新增：自动在边缘画上与背景同色的遮罩矩形，盖住黑线
-                addEdgeCovers(svgElement); 
-                generateIndependentFilters(svgElement);
+                // 清理掉原SVG内可能存在的干扰class，确保CSS接管颜色
+                const paths = svgElement.querySelectorAll("path");
+                paths.forEach(p => p.removeAttribute("class"));
+
+                // 遮掉被 viewBox 裁切出来的最外圈描边，避免出现整图方框感
+                addViewportEdgeMask(svgElement);
+                
                 generateLabels(svgElement);
                 setupInteractions();
             }
         });
 
-    // 核心修复逻辑：动态读取 SVG 画板边界，画四条纯色“胶布”盖住画板线框
-    function addEdgeCovers(svgElement) {
-        const coverGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        coverGroup.setAttribute("pointer-events", "none"); // 防止遮挡下方点击
-        
-        // 读取原图大小，如果读不到则使用你在问题1提供的默认宽高
-        const vb = svgElement.viewBox.baseVal;
-        const w = vb ? vb.width : 757.5;
-        const h = vb ? vb.height : 821;
-        
-        const coverThickness = 12; // 遮罩厚度
-        const bgColor = "#f8f6f0"; // 网页背景色
-        
-        // 定义四周的四个矩形遮罩
-        const edges = [
-            { x: -coverThickness, y: -coverThickness, width: w + coverThickness * 2, height: coverThickness * 2 }, // 上
-            { x: -coverThickness, y: h - coverThickness, width: w + coverThickness * 2, height: coverThickness * 2 }, // 下
-            { x: -coverThickness, y: -coverThickness, width: coverThickness * 2, height: h + coverThickness * 2 }, // 左
-            { x: w - coverThickness, y: -coverThickness, width: coverThickness * 2, height: h + coverThickness * 2 } // 右
+    function addViewportEdgeMask(svgElement) {
+        const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
+        const width = vb && vb.width ? vb.width : 757.5;
+        const height = vb && vb.height ? vb.height : 821;
+        const thickness = 2.5;
+        const bgColor = getComputedStyle(document.documentElement)
+            .getPropertyValue("--bg-color")
+            .trim() || "#F4F4F0";
+
+        const maskGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        maskGroup.setAttribute("id", "viewport-edge-mask");
+        maskGroup.setAttribute("pointer-events", "none");
+
+        const rectDefs = [
+            { x: -thickness, y: -thickness, width: width + thickness * 2, height: thickness * 2 },
+            { x: -thickness, y: height - thickness, width: width + thickness * 2, height: thickness * 2 },
+            { x: -thickness, y: -thickness, width: thickness * 2, height: height + thickness * 2 },
+            { x: width - thickness, y: -thickness, width: thickness * 2, height: height + thickness * 2 }
         ];
-        
-        edges.forEach(rect => {
-            const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            r.setAttribute("x", rect.x);
-            r.setAttribute("y", rect.y);
-            r.setAttribute("width", rect.width);
-            r.setAttribute("height", rect.height);
-            r.setAttribute("fill", bgColor);
-            coverGroup.appendChild(r);
+
+        rectDefs.forEach(def => {
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", def.x);
+            rect.setAttribute("y", def.y);
+            rect.setAttribute("width", def.width);
+            rect.setAttribute("height", def.height);
+            rect.setAttribute("fill", bgColor);
+            maskGroup.appendChild(rect);
         });
-        
-        svgElement.appendChild(coverGroup);
-    }
 
-    function generateIndependentFilters(svgElement) {
-        let defs = svgElement.querySelector('defs');
-        if (!defs) {
-            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-            svgElement.insertBefore(defs, svgElement.firstChild);
-        }
-
-        Object.keys(coreRegionsConfig).forEach((id, index) => {
-            const filterId = `ink-wash-${id}`;
-            const uniqueSeed = index * 53 + 24; 
-            const animDuration = 15 + index * 3; 
-
-            const filterHTML = `
-                <filter id="${filterId}" x="-20%" y="-20%" width="140%" height="140%">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="5" seed="${uniqueSeed}" result="noise">
-                        <animate attributeName="baseFrequency" values="0.007; 0.01; 0.007" dur="${animDuration}s" repeatCount="indefinite" />
-                    </feTurbulence>
-                    <feComponentTransfer in="noise" result="highContrastNoise">
-                        <feFuncA type="linear" slope="1.8" intercept="-0.3"/>
-                    </feComponentTransfer>
-                    <feColorMatrix type="matrix" values="0 0 0 0 0.15  0 0 0 0 0.15  0 0 0 0 0.15  0 0 0 0.8 0" in="highContrastNoise" result="inkColor" />
-                    <feComposite operator="in" in="inkColor" in2="SourceGraphic" result="maskedInk" />
-                    <feBlend mode="multiply" in="SourceGraphic" in2="maskedInk" />
-                </filter>
-            `;
-            defs.insertAdjacentHTML('beforeend', filterHTML);
-
-            const pathEl = document.getElementById(id);
-            if (pathEl) {
-                pathEl.style.filter = `url(#${filterId})`;
-            }
-        });
-    }
-
-    function generateLabels(svgElement) {
-        const textLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        textLayer.setAttribute("id", "labels-layer");
-
-        Object.keys(coreRegionsConfig).forEach(id => {
-            const pathEl = document.getElementById(id);
-            if (pathEl) {
-                const bbox = pathEl.getBBox();
-                let x = bbox.x + bbox.width / 2;
-                let y = bbox.y + bbox.height / 2;
-
-                if (id === 'qimen') {
-                    x += 20; 
-                    y += 10;
-                }
-
-                const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                textEl.textContent = coreRegionsConfig[id].name;
-                textEl.setAttribute("x", x);
-                textEl.setAttribute("y", y);
-                textEl.setAttribute("class", "svg-label core-text");
-
-                textLayer.appendChild(textEl);
-            }
-        });
-        
-        svgElement.appendChild(textLayer);
+        svgElement.appendChild(maskGroup);
     }
 
     function setupInteractions() {
-        const coreRegions = Object.keys(coreRegionsConfig);
-        
-        coreRegions.forEach(id => {
+        // 关闭按钮逻辑
+        closeBtn.addEventListener("click", () => {
+            infoCard.classList.add("hidden");
+            introSection.classList.remove("hidden");
+            
+            // 恢复所有区域样式
+            Object.keys(coreRegionsConfig).forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.style.opacity = '1'; }
+            });
+            // 恢复试图缩放
+            svgWrapper.style.transform = "scale(1) translate(0, 0)";
+        });
+
+        Object.keys(coreRegionsConfig).forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
 
             el.addEventListener("click", (e) => {
-                coreRegions.forEach(r => document.getElementById(r)?.classList.remove("active-region"));
-                el.classList.add("active-region");
+                // 1. 面板切换
+                introSection.classList.add("hidden");
+                infoCard.classList.remove("hidden");
 
-                const data = huizhouData[id];
-                if (data) {
-                    document.getElementById("card-title").textContent = data.title;
-                    document.getElementById("card-subtitle").textContent = data.subtitle;
-                    infoCard.classList.remove("hidden");
-                }
-                e.stopPropagation();
+                // 2. 更新数据
+                updateCardInfo(id);
+
+                // 3. 产生聚焦的视图缩放（模拟下钻视角）
+                // 简单地放大 SVG wrapper 并居中
+                svgWrapper.style.transform = "scale(1.15) translateX(5%)";
+
+                // 4. 其他没选中的区域变暗
+                Object.keys(coreRegionsConfig).forEach(otherId => {
+                    const otherEl = document.getElementById(otherId);
+                    if (otherEl) {
+                        otherEl.style.opacity = (otherId === id) ? '1' : '0.3';
+                    }
+                });
             });
         });
-
-        document.getElementById("svg-wrapper").addEventListener("click", hideCard);
-        closeBtn.addEventListener("click", (e) => { hideCard(); e.stopPropagation(); });
     }
 
-    function hideCard() {
-        infoCard.classList.add("hidden");
-        Object.keys(coreRegionsConfig).forEach(r => document.getElementById(r)?.classList.remove("active-region"));
+    function updateCardInfo(id) {
+        const data = huizhouData[id];
+        if(!data) return;
+        document.getElementById("card-county-seal").src = `./seal/${id}.png`;        document.getElementById("card-title").textContent = data.title;
+        document.getElementById("card-subtitle").textContent = data.subtitle;
+        document.getElementById("card-dynasty").textContent = data.dynasty;
+        document.getElementById("card-desc").textContent = data.desc;
+
+        // 更新进度条数据动画
+        const fills = document.querySelectorAll(".bar-fill");
+        if(fills.length >= 3) {
+            fills[0].style.width = '0%'; fills[1].style.width = '0%'; fills[2].style.width = '0%';
+            setTimeout(() => {
+                fills[0].style.width = data.chart[0] + '%';
+                fills[1].style.width = data.chart[1] + '%';
+                fills[2].style.width = data.chart[2] + '%';
+            }, 100);
+        }
+    }
+
+    // 绘制标签 (原有逻辑简化版)
+    function generateLabels(svgElement) {
+        // 首先绘制背景地名，不抢核心地界风头
+        Object.keys(contextRegionsConfig).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const bbox = el.getBBox();
+            
+            let x = bbox.x + bbox.width / 2;
+            let y = bbox.y + bbox.height / 2;
+
+            if (id === 'raozhou') {
+                x -= 75;
+            }
+
+            const textHTML = `<text x="${x}" y="${y}" class="context-text svg-label" text-anchor="middle" dominant-baseline="central">${contextRegionsConfig[id].name}</text>`;
+            // 将周边地名的标注放在最后，避免被地块的 fill 遮挡
+            svgElement.insertAdjacentHTML('beforeend', textHTML); 
+        });
+
+        // 绘制一府六县地名
+        Object.keys(coreRegionsConfig).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const bbox = el.getBBox();
+            
+            let x = bbox.x + bbox.width / 2;
+            let y = bbox.y + bbox.height / 2;
+            // 微调祁门位置
+            if (id === 'qimen') {
+                x += 20;
+                y += 10;
+            }
+
+            const textHTML = `<text x="${x}" y="${y}" class="core-text svg-label" text-anchor="middle" dominant-baseline="central">${coreRegionsConfig[id].name}</text>`;
+            svgElement.insertAdjacentHTML('beforeend', textHTML);
+        });
     }
 });
