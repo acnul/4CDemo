@@ -10,7 +10,7 @@
 // 随机点的数据类别和生成的占位池
 const archCategories = [
     { type: "residence", name: "民居", icon: "./icon/dwelling.svg" },
-    { type: "office", name: "官衙", icon: "./icon/gov.svg" },
+    { type: "office", name: "官府", icon: "./icon/gov.svg" },
     { type: "bridge", name: "桥梁", icon: "./icon/bridge.svg" },
     { type: "shrine", name: "宗祠", icon: "./icon/gov.svg" } // 暂用gov复用宗祠
 ];
@@ -39,34 +39,34 @@ const bgDecorationConfig = {
 // 预构件数据，模拟方案中的 JSON 结构
 const huizhouData = {
     "shexian": { 
-        title: "歙县·徽州府衙", subtitle: "Huizhou Prefecture Yamen", seal: "官衙", 
-        dynasty: "明弘治年间", desc: "依山就势，粉墙黛瓦。建筑群采用轴线对称布局，展现了古代徽州成熟的砖木结构技艺，以及森严的封建礼制思想。作为古徽州的政治中心，其仪门、大堂等建筑保留了原汁原味的官式营造特征。",
+        title: "歙县", subtitle: "Shexian County", seal: "地域",
+        dynasty: "秦置歙县", desc: "古徽州政治、经济和文化中心。其作为徽州府治所在地长达千余年，是徽派文化发祥地。境内有徽州府衙、棠樾牌坊群以及渔梁坝遗迹。",
+        chart: [40, 30, 30]
+    },
+    "xiuning": {
+        title: "休宁", subtitle: "Xiuning County", seal: "地域",  
+        dynasty: "东汉建县", desc: "享有“中国第一状元县”的美名。休宁乃古徽州六邑之一，古村落和各色祠庙罗列，如黄村、万安老街等地均保留有原汁原味的古建筑风貌。",
+        chart: [60, 20, 20]
+    },
+    "yixian":  {
+        title: "黟县", subtitle: "Yixian County", seal: "地域",
+        dynasty: "秦建置", desc: "被誉为“中国画里的乡村”。以宏村、西递为代表的古村落群以其牛形水系和理水哲学成为世界文化遗产，完美展现了徽派民居背山面水的哲学意境。",
         chart: [50, 30, 20]
     },
-    "xiuning": { 
-        title: "休宁·承启堂", subtitle: "Chengqi Hall, Xiuning", seal: "民居", 
-        dynasty: "清乾隆年间", desc: "位于黄村，是典型的徽派古民居。宅内四水归堂的布局巧妙调和了采光与风水，精美的木雕牛腿讲述着休宁商人“贾而好儒”的历史渊源。",
-        chart: [70, 20, 10]
+    "jixi":    {
+        title: "绩溪", subtitle: "Jixi County", seal: "地域",
+        dynasty: "唐大历元年", desc: "素有“无徽无成镇，无绩不成街”之说。境内的龙川村保留了胡氏宗祠等木雕杰作，其深刻的宗族文化和徽商文化交相辉映。",
+        chart: [65, 20, 15]
     },
-    "yixian":  { 
-        title: "黟县·宏村月沼", subtitle: "Moon Lake, Hongcun Village", seal: "民居", 
-        dynasty: "明永乐年间", desc: "宏村的牛形水系工程是徽州先民理水的巅峰之作。月沼作为半月形的中心水池，四周马头墙倒映水中，展现了中国传统“天人合一”的审美意境。",
-        chart: [60, 25, 15]
+    "wuyuan":  {
+        title: "婺源", subtitle: "Wuyuan County", seal: "地域", 
+        dynasty: "唐开元二十八年", desc: "被誉为中国最美的乡村。境内的高低错落的马头墙、廊桥如彩虹桥，与油菜花田、山水融为一体，组成古徽州最纯净的画卷。",      
+        chart: [45, 10, 45] // 木、砖、石
     },
-    "jixi":    { 
-        title: "绩溪·龙川胡氏宗祠", subtitle: "Hu Family Ancestral Hall", seal: "宗祠", 
-        dynasty: "明嘉靖年间", desc: "以木雕艺术闻名于世，被称为“木雕艺术博物馆”。其门楼、享堂及寝室的构件雕琢细腻，不仅是宗族礼制的空间载体，也是徽派雕刻技艺的集大成者。",
-        chart: [85, 10, 5]
-    },
-    "wuyuan":  { 
-        title: "婺源·彩虹桥", subtitle: "Rainbow Bridge, Wuyuan", seal: "桥梁", 
-        dynasty: "南宋", desc: "古徽州最古老、最长的廊桥。建于清水的清华村，采用半船形桥墩设计以减轻洪水冲击，体现了极高的实用主义与古典结构美学的结合。",
-        chart: [40, 0, 60] // 木、砖、石
-    },
-    "qimen":   { 
-        title: "祁门·古戏台", subtitle: "Ancient Stage, Qimen", seal: "宗祠", 
-        dynasty: "明清时期", desc: "散落于祁门各村落的古戏台，通常与宗祠结合。它们不仅是祭祀与娱乐的中心，其华丽的藻井和出挑的飞檐，正是徽派建筑极致繁华的缩影。",
-        chart: [75, 15, 10]
+    "qimen":   {
+        title: "祁门", subtitle: "Qimen County", seal: "地域",
+        dynasty: "唐武德五年", desc: "以祁门红茶闻名天下。境内群山环抱，古村落中散落的古戏台、宗祠见证了戏曲艺术在徽州乡间的繁荣。",
+        chart: [55, 25, 20]
     }
 };
 
@@ -76,9 +76,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const infoCard = document.getElementById("info-card");
     const closeBtn = document.getElementById("close-btn");
 
-    fetch('./map.svg')
-        .then(response => response.text())
-        .then(svgContent => {
+    Promise.all([
+        fetch("./data/data.jsonl").then(res => res.text()).catch(e => { console.error("Could not load data.jsonl:", e); return ""; }),
+        fetch('./map.svg').then(res => res.text())
+    ]).then(([text, svgContent]) => {
+        if(text) {
+            const lines = text.trim().split("\n"); 
+            lines.forEach(line => { 
+                if(!line) return; 
+                try { 
+                    const obj = JSON.parse(line); 
+                    if (!bgArchData[obj.county]) bgArchData[obj.county] = []; 
+                    const existingIndex = bgArchData[obj.county].findIndex(i => i.id === obj.id);
+                    if(existingIndex === -1) {
+                        const _catMatch = archCategories.find(c => c.name === obj.category || c.type === obj.category);
+                        const _catType = _catMatch ? _catMatch.type : obj.category;
+                        bgArchData[obj.county].push({
+                            id: obj.id,
+                            county: obj.county,
+                            type: _catType,
+                            typeName: obj.category,
+                            name: coreRegionsConfig[obj.county].name + "·" + obj.name,
+                            x: obj.coordinates[0],
+                            y: obj.coordinates[1], 
+                            image: obj.image, 
+                            markdown: obj.markdown 
+                        }); 
+                    } 
+                } catch(e) {} 
+            });
+        }
             const mapContainer = document.createElement("div");
             mapContainer.id = "map-3d-wrap";
             mapContainer.innerHTML = svgContent;
@@ -319,18 +346,28 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             el.addEventListener("click", (e) => {
-                // 1. 面板切换
+                const isCardVisible = !infoCard.classList.contains("hidden");
+
+                // 1. ����л�
                 introSection.classList.add("hidden");
-                infoCard.classList.remove("hidden");
                 svgWrapper.classList.add("is-focused");
 
-                // 打开始二级图鉴的随动子菜单
+                // ��ʼ����ͼ�����涯�Ӳ˵�
                 if (window.openSubMenuForCounty) {
                     window.openSubMenuForCounty(id);
                 }
 
-                // 2. 更新数据
-                updateCardInfo(id);
+                // 2. ƽ�������Ҳ࿨Ƭ����
+                if (isCardVisible) {
+                    infoCard.classList.add("hidden");
+                    setTimeout(() => {
+                        updateCardInfo(id);
+                        infoCard.classList.remove("hidden");
+                    }, 350); 
+                } else {
+                    updateCardInfo(id);
+                    infoCard.classList.remove("hidden");
+                }
 
                 // 3. 产生极其精细的 3D 视图与追踪聚焦
                 const bbox = el.getBBox();
@@ -366,26 +403,80 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function updateCardInfo(id) {
+    window.showArchCardInfo = function(id, countyId) { 
+    const metaList = bgArchData[countyId]; 
+    const meta = metaList.find(i => i.id === id); 
+    if(!meta) return; 
+
+    const introSection = document.getElementById("intro-section"); 
+    const infoCard = document.getElementById("info-card"); 
+    const isCardVisible = !infoCard.classList.contains("hidden");
+
+    introSection.classList.add("hidden"); 
+
+    const performUpdate = () => {
+        document.getElementById("card-county-seal").src = "./seal/" + countyId + ".png"; 
+        document.getElementById("card-title").textContent = meta.name; 
+        document.getElementById("card-subtitle").textContent = "[" + coreRegionsConfig[countyId].name + "] " + meta.typeName; 
+        const descEl = document.getElementById("card-desc"); 
+        if(descEl) descEl.innerHTML = "���ڼ�������..."; 
+        if(meta.markdown) { 
+            fetch(meta.markdown).then(r => r.text()).then(md => { 
+                const html = window.marked ? window.marked.parse(md) : md; 
+                if(descEl) descEl.innerHTML = html; 
+            }).catch(e => { 
+                if(descEl) descEl.innerHTML = "��������ʧ��"; 
+            }); 
+        } 
+        
+        const placeholder = document.querySelector(".card-image-placeholder"); 
+        if(placeholder) { 
+            placeholder.style.height = ''; 
+            placeholder.style.background = '';
+            placeholder.style.overflow = '';
+            if(meta.image) {
+                placeholder.innerHTML = "<img id=\"card-main-image\" src=\"\" style=\"width:100%; max-height:300px; object-fit:contain;\"/>";
+                processTransparentLineArt(meta.image, (dataUrl) => { 
+                    const imgEl = document.getElementById("card-main-image"); 
+                    if(imgEl) imgEl.src = dataUrl; 
+                }); 
+            } else { 
+                placeholder.innerHTML = "<div class=\"placeholder-ink-graphic\"><svg viewBox=\"0 0 100 100\" class=\"ink-icon\"><path d=\"M10 80 L50 20 L90 80 Z\" fill=\"none\" stroke=\"#666\" stroke-width=\"2\"/></svg><span>���������߸�</span></div>"; 
+            } 
+        }
+        
+        infoCard.classList.remove("hidden");
+    };
+
+    if (isCardVisible) {
+        infoCard.classList.add("hidden");
+        setTimeout(performUpdate, 350);
+    } else {
+        performUpdate();
+    }
+}
+
+      function processTransparentLineArt(imgSrc, callback) { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { try { const canvas = document.createElement("canvas"); canvas.width = img.width; canvas.height = img.height; const ctx = canvas.getContext("2d"); ctx.drawImage(img, 0, 0); const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); const data = imgData.data; for (let i = 0; i < data.length; i += 4) { const r = data[i], g = data[i+1], b = data[i+2]; if (r > 200 && g > 200 && b > 200) { data[i+3] = 0; } } ctx.putImageData(imgData, 0, 0); callback(canvas.toDataURL("image/png")); } catch(e) { callback(imgSrc); } }; img.onerror = () => callback(imgSrc); img.src = imgSrc; }
+
+      function updateCardInfo(id) {
         const data = huizhouData[id];
         if(!data) return;
 
 document.getElementById("card-county-seal").src = `./seal/${id}.png`;
         document.getElementById("card-title").textContent = data.title;
         document.getElementById("card-subtitle").textContent = data.subtitle;
-        document.getElementById("card-dynasty").textContent = data.dynasty;
         document.getElementById("card-desc").textContent = data.desc;
 
-        // 更新进度条数据动画
-        const fills = document.querySelectorAll(".bar-fill");
-        if(fills.length >= 3) {
-            fills[0].style.width = '0%'; fills[1].style.width = '0%'; fills[2].style.width = '0%';
-            setTimeout(() => {
-                fills[0].style.width = data.chart[0] + '%';
-                fills[1].style.width = data.chart[1] + '%';
-                fills[2].style.width = data.chart[2] + '%';
-            }, 100);
-        }
+        const placeholder = document.querySelector(".card-image-placeholder");  
+          if(placeholder) {
+              placeholder.style.height = 'auto';
+              placeholder.style.background = 'transparent';
+              placeholder.style.overflow = 'visible';
+                placeholder.innerHTML = "<img id='card-main-image' src='' style='width:100%; height:auto; display:block; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);'/>";
+              processTransparentLineArt(`./county/${id}.png`, (dataUrl) => {
+                  const imgEl = document.getElementById("card-main-image");
+                  if(imgEl) imgEl.src = dataUrl;
+              });          }
     }
 
     // 绘制标签 (原有逻辑简化版)
@@ -429,95 +520,47 @@ document.getElementById("card-county-seal").src = `./seal/${id}.png`;
     }
 
     function generateArchPoints(svgElement) {
-        const archHtmlLayer = document.getElementById("html-arch-layer");
-
-        let localSeed = 54321;
-        function rand() {
-            const x = Math.sin(localSeed++) * 10000;
-            return x - Math.floor(x);
-        }
-
-        const vb = svgElement.viewBox && svgElement.viewBox.baseVal;    
-        const viewBoxW = vb && vb.width ? vb.width : 757.5;
-        const viewBoxH = vb && vb.height ? vb.height : 821;
-
-        const svgPt = svgElement.createSVGPoint();
-
-        Object.keys(coreRegionsConfig).forEach(countyId => {
-            const pathEl = document.getElementById(countyId);
-            if(!pathEl) return;
+    const archHtmlLayer = document.getElementById("html-arch-layer");
+    const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
+    const viewBoxW = vb && vb.width ? vb.width : 757.5;
+    const viewBoxH = vb && vb.height ? vb.height : 821;
+    Object.keys(coreRegionsConfig).forEach(countyId => {
+        const pathEl = document.getElementById(countyId);
+        if(!pathEl) return;
+        if (!bgArchData[countyId]) return;
+        bgArchData[countyId].forEach(ptMeta => {
+            const baseSize = 40;
+            const div = document.createElement("div");
+            let iconUrl = "./icon/dwelling.svg"; 
+            const catInfo = archCategories.find(c => c.type === ptMeta.type || c.name === ptMeta.type || c.name === ptMeta.typeName || c.type === ptMeta.typeName);
+            if (catInfo && catInfo.icon) iconUrl = catInfo.icon;
             
-            bgArchData[countyId] = [];
-            const bbox = pathEl.getBBox();
-            
-            // 为每个县生成随机数目的点
-            const count = 12 + Math.floor(rand() * 8); 
-            let attempts = 0;
-            
-            while(bgArchData[countyId].length < count && attempts < 1000) {
-                attempts++;
-                const x = bbox.x + rand() * bbox.width;
-                const y = bbox.y + rand() * bbox.height;
-                
-                svgPt.x = x;
-                svgPt.y = y;
-                
-                // 由于 pathEl 可能是 <g> 标签，而 isPointInFill 只在 SVGGeometryElement (<path>, <polygon>等) 上有效
-                const geomElements = pathEl.tagName.toLowerCase() === 'g' 
-                    ? Array.from(pathEl.querySelectorAll('path, polygon, rect')) 
-                    : [pathEl];
-                
-                // 利用原生 isPointInFill 确保点严格在不规则区域边界内
-                const isInside = geomElements.some(el => typeof el.isPointInFill === 'function' && el.isPointInFill(svgPt));
-
-                if (isInside) {
-                    const cat = archCategories[Math.floor(rand() * archCategories.length)];
-                    const ptMeta = {
-                        id: `${countyId}_${bgArchData[countyId].length}`,
-                        county: countyId,
-                        type: cat.type,
-                        typeName: cat.name,
-                        name: `${coreRegionsConfig[countyId].name}·${cat.name}${bgArchData[countyId].length + 1}`,
-                        x: x,
-                        y: y
-                    };
-                    bgArchData[countyId].push(ptMeta);
-
-                    // 使用 HTML 渲染而不是 SVG 渲染，这样可以通过 CSS 的 3D TranslateZ 和 RotateX(-48deg) 完美垂直于摄影机
-                    const baseSize = 40; 
-                    const div = document.createElement("div");
-                    div.style.backgroundImage = `url(${cat.icon})`;
-                    div.style.backgroundSize = "contain";
-                    div.style.backgroundRepeat = "no-repeat";
-                    div.style.backgroundPosition = "bottom center";
-                    
-                    div.className = `arch-pt ${countyId} ${cat.type}`;
-                    div.setAttribute("data-id", ptMeta.id);
-                    div.setAttribute("data-county", countyId);
-                    
-                    // 将坐标从 viewBox 系转换到百分比布局系
-                    const leftPercent = (x / viewBoxW) * 100;
-                    const topPercent = (y / viewBoxH) * 100;
-                    
-                    div.style.position = "absolute";
-                    div.style.left = `${leftPercent}%`;
-                    div.style.top = `${topPercent}%`;
-                    div.style.width = `${baseSize}px`;
-                    div.style.height = `${baseSize}px`;
-                    // 将中心点定在元素的底部居中
-                    div.style.transformOrigin = "bottom center";
-                    // 用 margin 修正对齐到底部中心点，而不是左上角
-                    div.style.marginLeft = `-${baseSize / 2}px`;
-                    div.style.marginTop = `-${baseSize}px`;
-                    div.style.display = "block"; // 默认显示为一级总体图鉴的状态
-
-                    archHtmlLayer.appendChild(div);
-                }
-            }
+            div.style.backgroundImage = "url(" + iconUrl + ")";
+            div.style.backgroundSize = "contain";
+            div.style.backgroundRepeat = "no-repeat";
+            div.style.backgroundPosition = "bottom center";
+            const classType = catInfo ? catInfo.type : ptMeta.type;
+            div.className = "arch-pt " + countyId + " " + classType;
+            div.setAttribute("data-id", ptMeta.id);
+            div.setAttribute("data-county", countyId);
+            const leftPercent = (ptMeta.x / viewBoxW) * 100;
+            const topPercent = (ptMeta.y / viewBoxH) * 100;
+            div.style.position = "absolute";
+            div.style.left = leftPercent + "%";
+            div.style.top = topPercent + "%";
+            div.style.width = baseSize + "px";
+            div.style.height = baseSize + "px";
+            div.style.transformOrigin = "bottom center";
+            div.style.marginLeft = "-" + (baseSize / 2) + "px";
+            div.style.marginTop = "-" + baseSize + "px";
+            div.style.display = "block";
+            div.addEventListener("click", function(e) { e.stopPropagation(); window.showArchCardInfo(ptMeta.id, countyId); });
+            archHtmlLayer.appendChild(div);
         });
-    }
+    });
+}
 
-    function setupSubMenu() {
+function setupSubMenu() {
         const tabs = document.querySelectorAll(".nav-tabs button");
         const subNavPanel = document.getElementById("sub-nav-panel");
         const subNavClose = document.getElementById("sub-nav-close");
@@ -559,50 +602,66 @@ document.getElementById("card-county-seal").src = `./seal/${id}.png`;
             });
         }
 
+        let isSubNavListBuilt = false;
         tabs.forEach(tab => {
-            tab.addEventListener("click", (e) => {
-                tabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-                
-                const type = tab.getAttribute("data-type"); 
-                
-                if(window.currentFocusCounty) {
-                    subNavPanel.classList.add("active");
-                    let list = bgArchData[window.currentFocusCounty] || [];
-                    if(type !== "all") {
-                        list = list.filter(item => item.type === type);
-                    }
-                    
-                    const typeName = type === "all" ? "全部点位" : archCategories.find(c => c.type === type).name;
-                    subNavTitle.textContent = `${coreRegionsConfig[window.currentFocusCounty].name} · ${typeName}`;
-                    
+        tab.addEventListener("click", function(e) {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            const type = tab.getAttribute("data-type");
+
+            if (window.currentFocusCounty) {
+                subNavPanel.classList.add("active");
+                if (!isSubNavListBuilt) {
+                    isSubNavListBuilt = true;
+                    let list = Object.values(bgArchData).flat();
+                    subNavTitle.textContent = "营造图鉴";
                     subNavList.innerHTML = "";
                     list.forEach(item => {
                         const li = document.createElement("li");
-                        li.innerHTML = `<span>${item.typeName}</span> ${item.name}`;
+                        let imgHtml = item.image ? "<img class='art-preview' src='" + item.image + "' alt=''/> " : "";
+                        li.innerHTML = imgHtml + "<div class='art-title'>" + item.name + "</div>";
+                        li.setAttribute("data-type", item.type);
+                        if (item.image) { processTransparentLineArt(item.image, (dataUrl) => { const imgEl = li.querySelector(".art-preview"); if(imgEl) imgEl.src = dataUrl; }); }
                         li.addEventListener("mouseenter", () => highlightPoint(item.id));
                         li.addEventListener("mouseleave", () => unhighlightPoint(item.id));
+                        li.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            window.showArchCardInfo(item.id, item.county);
+                        });
                         subNavList.appendChild(li);
                     });
-                    
-                    document.querySelectorAll(".arch-pt").forEach(pt => {
-                        if (pt.classList.contains(window.currentFocusCounty)) {
-                            if (type === "all" || pt.classList.contains(type)) {
-                                pt.style.display = "block";
-                            } else {
-                                pt.style.display = "none";
-                            }
-                        } else {
-                            pt.style.display = "none"; 
-                        }
-                    });
-                } else {
-                    document.querySelectorAll(".arch-pt").forEach(pt => {
-                        pt.style.display = "none";
-                    });
                 }
-            });
+                
+                // Hide items in the subnav list based on type
+                Array.from(subNavList.children).forEach(li => {
+                    if (type === "all" || li.getAttribute("data-type") === type) {
+                        li.style.display = "flex";
+                    } else {
+                        li.style.display = "none";
+                    }
+                });
+
+                document.querySelectorAll(".arch-pt").forEach(pt => {
+                    if (pt.classList.contains(window.currentFocusCounty)) {     
+                        if (type === "all" || pt.classList.contains(type)) {    
+                            pt.style.display = "block";
+                        } else {
+                            pt.style.display = "none";
+                        }
+                    } else {
+                        pt.style.display = "none";
+                    }
+                });
+                document.querySelectorAll(".arch-pt").forEach(pt => {
+                    if (type === "all" || pt.classList.contains(type)) {
+                        pt.style.display = "block";
+                    } else {
+                        pt.style.display = "none";
+                    }
+                });
+            }
         });
+    });
     }
 
     function setupTooltips() {
