@@ -12,7 +12,7 @@ const archCategories = [
     { type: "residence", name: "民居", icon: "./icon/dwelling.svg" },
     { type: "office", name: "官府", icon: "./icon/gov.svg" },
     { type: "bridge", name: "桥梁", icon: "./icon/bridge.svg" },
-    { type: "shrine", name: "宗祠", icon: "./icon/gov.svg" } // 暂用gov复用宗祠
+    { type: "shrine", name: "宗祠", icon: "./icon/gov.svg" }
 ];
 const bgArchData = {};
 
@@ -27,45 +27,48 @@ const contextRegionsConfig = {
     "raozhou": { name: "饶州府" }
 };
 
-// 首页装饰背景图配置 (供手动调整参数)
+// 首页装饰背景图配置
 const bgDecorationConfig = {
-    scale: 1.5,       // 放缩比例
-    centerX: 420,     // 中心 X 坐标 (根据 SVG viewBox 宽度 758 居中预设)
-    centerY: 410,     // 中心 Y 坐标 (根据 SVG viewBox 高度 821 居中预设)
-    baseWidth: 900,   // 图片的基准渲染宽度（如果发现太小或太大可调整）
-    baseHeight: 900   // 图片的基准渲染高度
+    scale: 1.5,
+    centerX: 420,
+    centerY: 410,
+    baseWidth: 900,
+    baseHeight: 900
 };
 
-// 预构件数据，模拟方案中的 JSON 结构
+// 建筑图片缓存：存储已处理的透明PNG数据
+const architectureImageCache = {};
+
+// 预构件数据
 const huizhouData = {
     "shexian": { 
         title: "歙县", subtitle: "Shexian County", seal: "地域",
-        dynasty: "秦置歙县", desc: "古徽州政治、经济和文化中心。其作为徽州府治所在地长达千余年，是徽派文化发祥地。境内有徽州府衙、棠樾牌坊群以及渔梁坝遗迹。",
+        dynasty: "秦置歙县", desc: "歙县，古徽州政治、经济与文化之绝对中枢。作为长达千余年的徽州府治所在地，其境内的建筑营造深刻烙印着森严的官方礼制与高等级的形制规范。从气象庄严的徽州府衙，到彰显宗族功名的棠樾牌坊群，再到扼守新安江水运咽喉的渔梁坝，歙县的建筑不仅是砖木石的组合，更是古代封建政权与徽商资本在皖南地理空间上的权力折射与秩序构建。",
         chart: [40, 30, 30]
     },
     "xiuning": {
         title: "休宁", subtitle: "Xiuning County", seal: "地域",  
-        dynasty: "东汉建县", desc: "享有“中国第一状元县”的美名。休宁乃古徽州六邑之一，古村落和各色祠庙罗列，如黄村、万安老街等地均保留有原汁原味的古建筑风貌。",
+        dynasty: "东汉建县", desc: "休宁，居新安江之首，素享“中国第一状元县”之隆誉。鼎盛的科举文风与繁荣的商道水网，在此交织出了极为丰富的建筑肌理。有别于府城的庄严肃穆，休宁的营造更显露着深厚的人文烟火气息。从黄村等古村落的粉墙黛瓦与错落天井，到万安老街沿江逶迤的商铺民居，休宁的建筑生动诠释了徽州先民如何在市井商贸与儒家耕读之间，寻得最平衡的人居空间尺度。",
         chart: [60, 20, 20]
     },
     "yixian":  {
         title: "黟县", subtitle: "Yixian County", seal: "地域",
-        dynasty: "秦建置", desc: "被誉为“中国画里的乡村”。以宏村、西递为代表的古村落群以其牛形水系和理水哲学成为世界文化遗产，完美展现了徽派民居背山面水的哲学意境。",
+        dynasty: "秦建置", desc: "黟县，深藏于皖南群山腹地，其建筑遗产是古人探寻天人合一人居环境的极高境界。以宏村、西递为代表的传统聚落，并未采用死板的几何对称，而是因地制宜，创造出令人惊叹的“仿生学”理水网络。其引水入村、穿堂过院的精密人工水系，不仅解决了古代村落的消防与生活用水，更在空间布局上将“背山面水”的风水理念转化为科学的生态营建算法，堪称世界人居史上的杰作。",
         chart: [50, 30, 20]
     },
     "jixi":    {
         title: "绩溪", subtitle: "Jixi County", seal: "地域",
-        dynasty: "唐大历元年", desc: "素有“无徽无成镇，无绩不成街”之说。境内的龙川村保留了胡氏宗祠等木雕杰作，其深刻的宗族文化和徽商文化交相辉映。",
+        dynasty: "唐大历元年", desc: "绩溪，扼守徽杭古道之要冲，素有“邑小士多”之誉。受制于“八山一水一分田”的严苛地形，绩溪先民将家族的生存与繁衍寄托于极其严密的宗族聚落营建之中。境内的龙川村等传统村落，以精妙的理水布局与群山共生。其极具代表性的胡氏宗祠，更将徽派木雕的镂空与浮雕技艺推向极致，堪称徽州宗族社会与精微建筑工艺完美交融的立体空间典范。",
         chart: [65, 20, 15]
     },
     "wuyuan":  {
         title: "婺源", subtitle: "Wuyuan County", seal: "地域", 
-        dynasty: "唐开元二十八年", desc: "被誉为中国最美的乡村。境内的高低错落的马头墙、廊桥如彩虹桥，与油菜花田、山水融为一体，组成古徽州最纯净的画卷。",      
-        chart: [45, 10, 45] // 木、砖、石
+        dynasty: "唐开元二十八年", desc: "婺源，古徽州一府六县之南大门。这里水网密布、溪流纵横，特殊的水文地貌催生了极其发达的桥梁建筑体系。境内星罗棋布的廊桥（如彩虹桥）与石拱桥，犹如地理空间的针脚，将隔水相望的村落与商道紧密缝合。高低错落的马头墙与跨水而居的建筑群，在此与自然山水达成了极其微妙的平衡，共同绘就了一幅水陆交织、风土交融的徽州人居宏大画卷。",      
+        chart: [45, 10, 45]
     },
     "qimen":   {
         title: "祁门", subtitle: "Qimen County", seal: "地域",
-        dynasty: "唐武德五年", desc: "以祁门红茶闻名天下。境内群山环抱，古村落中散落的古戏台、宗祠见证了戏曲艺术在徽州乡间的繁荣。",
+        dynasty: "唐武德五年", desc: "祁门，地处古徽州最西陲，境内重峦叠嶂，地形极其闭塞。正是这种隔绝的地理环境，使其保留了极具原始风貌的内向型村落肌理。受制于崎岖的地势，祁门的古建大多依山就势、紧凑排布。散落于各村落的宗祠与古戏台，不仅是精巧的木构建筑，更是古代徽州乡间维系宗族血脉、开展公共礼乐活动的核心空间节点，见证了深山聚落中极其丰满的精神文化生活。",
         chart: [55, 25, 20]
     }
 };
@@ -76,35 +79,163 @@ document.addEventListener("DOMContentLoaded", () => {
     const infoCard = document.getElementById("info-card");
     const closeBtn = document.getElementById("close-btn");
 
-    
     const svgWrapInitial = document.getElementById("svg-wrapper");
     if(svgWrapInitial) svgWrapInitial.classList.add("initial-enter");
 
-    Promise.all([
-        fetch("./data/data.jsonl").then(res => res.text()).catch(e => { console.error("Could not load data.jsonl:", e); return ""; }),
-        fetch('./map.svg').then(res => res.text())
-    ]).then(([text, svgContent]) => {
-        if(text) {
-        
-        const splashScreen = document.getElementById("splash-screen");
-        const enterBtn = document.getElementById("enter-btn");
-        const svgWrapperNode = document.getElementById("svg-wrapper");
-        
-        if (enterBtn) {
-            enterBtn.textContent = "点击进入";
-            enterBtn.disabled = false;
-            enterBtn.classList.add("pulse-animation");
+    // ========== 处理透明线稿图片（白色背景转透明） ==========
+    function processTransparentLineArt(imgSrc, callback) { 
+        const img = new Image(); 
+        img.crossOrigin = "Anonymous"; 
+        img.onload = () => { 
+            try { 
+                const canvas = document.createElement("canvas"); 
+                canvas.width = img.width; 
+                canvas.height = img.height; 
+                const ctx = canvas.getContext("2d"); 
+                ctx.drawImage(img, 0, 0); 
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+                const data = imgData.data; 
+                for (let i = 0; i < data.length; i += 4) { 
+                    const r = data[i], g = data[i+1], b = data[i+2]; 
+                    if (r > 200 && g > 200 && b > 200) { 
+                        data[i+3] = 0; 
+                    } 
+                } 
+                ctx.putImageData(imgData, 0, 0); 
+                callback(canvas.toDataURL("image/png")); 
+            } catch(e) { 
+                callback(imgSrc); 
+            } 
+        }; 
+        img.onerror = () => callback(imgSrc); 
+        img.src = imgSrc; 
+    }
+
+    // ========== 预加载开屏装饰图片 ==========
+    function preloadSplashImages() {
+        return new Promise((resolve) => {
+            const images = [
+                document.querySelector('.splash-decorate.up'),
+                document.querySelector('.splash-decorate.down')
+            ];
             
-            enterBtn.addEventListener("click", () => {
-                if(splashScreen) splashScreen.classList.add("is-hidden");
-                // Delay dropping the map view
-                setTimeout(() => {
-                    if(svgWrapperNode) {
-                        svgWrapperNode.classList.remove("initial-enter");
-                    }
-                }, 400); 
+            let loadedCount = 0;
+            const totalCount = 2;
+            
+            // 立即隐藏装饰图片
+            images.forEach(img => {
+                if(img) {
+                    img.style.opacity = '0';
+                    img.style.animation = 'none';
+                }
             });
+            
+            images.forEach((img, index) => {
+                if (img) {
+                    // 创建新的Image对象来预加载
+                    const preloadImg = new Image();
+                    preloadImg.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === totalCount) {
+                            // 两个图片都加载完了，恢复动画
+                            // 使用 requestAnimationFrame 避免强制重排
+                            requestAnimationFrame(() => {
+                                images.forEach((el) => {
+                                    if(el) {
+                                        el.style.opacity = '';
+                                        el.style.animation = '';
+                                    }
+                                });
+                            });
+                            resolve();
+                        }
+                    };
+                    preloadImg.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === totalCount) {
+                            // 如果加载失败，也执行恢复逻辑
+                            requestAnimationFrame(() => {
+                                images.forEach((el) => {
+                                    if(el) {
+                                        el.style.opacity = '';
+                                        el.style.animation = '';
+                                    }
+                                });
+                            });
+                            resolve();
+                        }
+                    };
+                    preloadImg.src = img.src;
+                }
+            });
+            
+            // 10秒超时保护
+            setTimeout(() => {
+                if (loadedCount < totalCount) {
+                    // 超时时强制恢复
+                    requestAnimationFrame(() => {
+                        images.forEach((el) => {
+                            if(el) {
+                                el.style.opacity = '';
+                                el.style.animation = '';
+                            }
+                        });
+                    });
+                    resolve();
+                }
+            }, 10000);
+        });
+    }
+
+    // ========== 预加载六个县的介绍图片 ==========
+    function preloadCountyImages() {
+        const countyIds = ['shexian', 'xiuning', 'yixian', 'jixi', 'wuyuan', 'qimen'];
+        countyIds.forEach(id => {
+            const img = new Image();
+            img.src = `./county/${id}.png`;
+        });
+    }
+
+    // 首先预加载开屏图片，然后继续其他加载
+    preloadSplashImages().then(() => {
+        // 开屏图片加载完成后，开始预加载县图片
+        preloadCountyImages();
+        
+        // 启用"进入"按钮的点击功能
+        const enterBtn = document.getElementById("enter-btn");
+        if (enterBtn) {
+            enterBtn.disabled = false;
+            enterBtn.classList.add("ready");
         }
+
+        // 继续加载主要数据
+        return Promise.all([
+            fetch("./data/data.jsonl").then(res => res.text()).catch(e => { console.error("Could not load data.jsonl:", e); return ""; }),
+            fetch('./map.svg').then(res => res.text())
+        ]);
+    }).then(([text, svgContent]) => {
+        if(text) {
+            const splashScreen = document.getElementById("splash-screen");
+            const enterBtn = document.getElementById("enter-btn");
+            const svgWrapperNode = document.getElementById("svg-wrapper");
+            
+            if (enterBtn) {
+                enterBtn.textContent = "点击进入";
+                enterBtn.disabled = false;
+                enterBtn.classList.add("pulse-animation");
+                
+                enterBtn.addEventListener("click", () => {
+                    if(splashScreen) splashScreen.classList.add("is-hidden");
+                    setTimeout(() => {
+                        if(svgWrapperNode) {
+                            svgWrapperNode.classList.remove("initial-enter");
+                        }
+                    }, 400);
+                    
+                    // 用户进入后开始预加载建筑图片（不会影响开屏动画）
+                    processArchitecturesInBatches();
+                });
+            }
 
             const lines = text.trim().split("\n"); 
             lines.forEach(line => { 
@@ -131,95 +262,136 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch(e) {} 
             });
         }
-            const mapContainer = document.createElement("div");
-            mapContainer.id = "map-3d-wrap";
-            mapContainer.innerHTML = svgContent;
-
-            const archHtmlLayer = document.createElement("div");
-            archHtmlLayer.id = "html-arch-layer";
-            mapContainer.appendChild(archHtmlLayer);
+        
+        // ========== 预加载前6个建筑的图片（在点击"进入"按钮后开始） ==========
+        // 该函数会在用户点击"进入"按钮时被调用，不会阻塞开屏动画
+        function preloadArchitectureImages() {
+            // 该函数仅用作声明，实际处理逻辑在 processArchitecturesInBatches()
+            // 真正的预加载会在用户点击"进入"按钮后触发
+        }
+        
+        // 分批处理建筑图片的缓存（在用户交互时调用）
+        function processArchitecturesInBatches() {
+            const countyIds = ['shexian', 'xiuning', 'yixian', 'jixi', 'wuyuan', 'qimen'];
+            const allArchs = [];
             
-            svgWrapper.innerHTML = '';
-            svgWrapper.appendChild(mapContainer);
-
-            const svgElement = mapContainer.querySelector('svg');
-
-            if(svgElement) {
-                // 清理掉原SVG内可能存在的干扰class，确保CSS接管颜色
-                const paths = svgElement.querySelectorAll("path");
-                paths.forEach(p => p.removeAttribute("class"));
-
-                // 取消 SVG 的 overflow: hidden，从而让背景图突破画布
-                svgElement.style.overflow = "visible";
-
-                // 插入底层装饰背景图 (保证作为第一层放入SVG内，即置于最底层)
-                const bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
-                bgImage.setAttribute("href", "./background/background.png");
-                const bgW = bgDecorationConfig.baseWidth * bgDecorationConfig.scale;
-                const bgH = bgDecorationConfig.baseHeight * bgDecorationConfig.scale;
-                bgImage.setAttribute("x", bgDecorationConfig.centerX - bgW / 2);
-                bgImage.setAttribute("y", bgDecorationConfig.centerY - bgH / 2);
-                bgImage.setAttribute("width", bgW);
-                bgImage.setAttribute("height", bgH);
-                bgImage.style.pointerEvents = "none";
-                bgImage.style.mixBlendMode = "multiply"; // 使用正片叠底，使其与原本的底色自然融合
-
-                // 将原本的直属子节点（整个地图层）包裹进组，并应用裁切防止显示生硬的框线
-                const mapGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                let defs = svgElement.querySelector("defs");
-                if (!defs) {
-                    defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-                    svgElement.prepend(defs);
+            // 收集所有6万以内的建筑
+            for (const countyId of countyIds) {
+                const architectures = bgArchData[countyId] || [];
+                for (let i = 0; i < Math.min(6, architectures.length); i++) {
+                    allArchs.push(architectures[i]);
                 }
-                const clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
-                clipPath.setAttribute("id", "map-border-clip");
-                const clipRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
-                const width = vb && vb.width ? vb.width : 757.5;
-                const height = vb && vb.height ? vb.height : 821;
-                // 裁掉边缘 1.5px 距离，使黑边彻底消失
-                clipRect.setAttribute("x", "1.5");
-                clipRect.setAttribute("y", "1.5");
-                clipRect.setAttribute("width", width - 3);
-                clipRect.setAttribute("height", height - 3);
-                clipPath.appendChild(clipRect);
-                defs.appendChild(clipPath);
-
-                mapGroup.setAttribute("clip-path", "url(#map-border-clip)");
-
-                // 把原来的原地图编组或节点塞进裁切组中
-                Array.from(svgElement.childNodes).forEach(child => {
-                    if (child.tagName && child.tagName.toLowerCase() !== 'defs' && child !== mapGroup) {
-                        mapGroup.appendChild(child);
-                    }
-                });
-                svgElement.insertBefore(mapGroup, svgElement.firstChild); // 放在图层最前面
-
-                // 将背景纹理附加在原始线条与遮罩之上，不受地图边缘裁切限制
-                svgElement.appendChild(bgImage);
-
-                // 创建阴影编组，赋予整体外围描边阴影
-                const coreShadowGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                coreShadowGroup.setAttribute("id", "core-shadow-group");
-                Object.keys(coreRegionsConfig).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) coreShadowGroup.appendChild(el);
-                });
-                
-                svgElement.appendChild(coreShadowGroup);
-
-                applyTexturesToCoreRegions(svgElement, coreShadowGroup);
-
-                generateLabels(svgElement);
-                generateArchPoints(svgElement);
-                setupSubMenu();
-                setupTooltips();
-                setupInteractions();
             }
-        });
+            
+            let currentIndex = 0;
+            
+            // 每次处理2个，然后让出时间片
+            const processBatch = () => {
+                const batchSize = 2;
+                let processed = 0;
+                
+                while (currentIndex < allArchs.length && processed < batchSize) {
+                    const arch = allArchs[currentIndex];
+                    currentIndex++;
+                    
+                    if (arch.image && !architectureImageCache[arch.id]) {
+                        // 异步处理，不阻塞
+                        processTransparentLineArt(arch.image, (dataUrl) => {
+                            architectureImageCache[arch.id] = dataUrl;
+                        });
+                    }
+                    processed++;
+                }
+                
+                // 如果还有剩余，继续处理
+                if (currentIndex < allArchs.length) {
+                    setTimeout(processBatch, 150); // 150ms后处理下一批
+                }
+            };
+            
+            processBatch();
+        }
+        
+        const mapContainer = document.createElement("div");
+        mapContainer.id = "map-3d-wrap";
+        mapContainer.innerHTML = svgContent;
+
+        const archHtmlLayer = document.createElement("div");
+        archHtmlLayer.id = "html-arch-layer";
+        mapContainer.appendChild(archHtmlLayer);
+        
+        svgWrapper.innerHTML = '';
+        svgWrapper.appendChild(mapContainer);
+
+        const svgElement = mapContainer.querySelector('svg');
+
+        if(svgElement) {
+            const paths = svgElement.querySelectorAll("path");
+            paths.forEach(p => p.removeAttribute("class"));
+
+            svgElement.style.overflow = "visible";
+
+            const bgImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            bgImage.setAttribute("href", "./background/background.png");
+            const bgW = bgDecorationConfig.baseWidth * bgDecorationConfig.scale;
+            const bgH = bgDecorationConfig.baseHeight * bgDecorationConfig.scale;
+            bgImage.setAttribute("x", bgDecorationConfig.centerX - bgW / 2);
+            bgImage.setAttribute("y", bgDecorationConfig.centerY - bgH / 2);
+            bgImage.setAttribute("width", bgW);
+            bgImage.setAttribute("height", bgH);
+            bgImage.style.pointerEvents = "none";
+            bgImage.style.mixBlendMode = "multiply";
+
+            const mapGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            let defs = svgElement.querySelector("defs");
+            if (!defs) {
+                defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                svgElement.prepend(defs);
+            }
+            const clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+            clipPath.setAttribute("id", "map-border-clip");
+            const clipRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
+            const width = vb && vb.width ? vb.width : 757.5;
+            const height = vb && vb.height ? vb.height : 821;
+            clipRect.setAttribute("x", "1.5");
+            clipRect.setAttribute("y", "1.5");
+            clipRect.setAttribute("width", width - 3);
+            clipRect.setAttribute("height", height - 3);
+            clipPath.appendChild(clipRect);
+            defs.appendChild(clipPath);
+
+            mapGroup.setAttribute("clip-path", "url(#map-border-clip)");
+
+            Array.from(svgElement.childNodes).forEach(child => {
+                if (child.tagName && child.tagName.toLowerCase() !== 'defs' && child !== mapGroup) {
+                    mapGroup.appendChild(child);
+                }
+            });
+            svgElement.insertBefore(mapGroup, svgElement.firstChild);
+
+            svgElement.appendChild(bgImage);
+
+            const coreShadowGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            coreShadowGroup.setAttribute("id", "core-shadow-group");
+            Object.keys(coreRegionsConfig).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) coreShadowGroup.appendChild(el);
+            });
+            
+            svgElement.appendChild(coreShadowGroup);
+
+            applyTexturesToCoreRegions(svgElement, coreShadowGroup);
+
+            generateLabels(svgElement);
+            generateArchPoints(svgElement);
+            setupSubMenu();
+            setupTooltips();
+            setupInteractions();
+        }
+    });
 
     function applyTexturesToCoreRegions(svgElement, coreShadowGroup) {
-        // 使用固定种子生成伪随机数，确保每次刷新纹理截取位置固定
         let seed = 42;
         function seededRandom() {
             const x = Math.sin(seed++) * 10000;
@@ -236,7 +408,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const el = document.getElementById(id);
             if (!el) return;
 
-            // 根据固定种子生成背景平移参数截取不同部分的纹理
             const randomX = -Math.floor(seededRandom() * 150);
             const randomY = -Math.floor(seededRandom() * 150);
 
@@ -257,11 +428,10 @@ document.addEventListener("DOMContentLoaded", () => {
             pattern.appendChild(image);
             defs.appendChild(pattern);
 
-            // 克隆地形路径变成叠加纹理层，叠加在原来元素上方
             const overlay = el.cloneNode(true);
             overlay.removeAttribute("id");
-            overlay.setAttribute("pointer-events", "none"); // 事件穿透，不影响原本元素的 hover 和 click
-            overlay.style.mixBlendMode = "multiply"; // 水墨叠加融合模式
+            overlay.setAttribute("pointer-events", "none");
+            overlay.style.mixBlendMode = "multiply";
             overlay.style.opacity = "0.35";
             overlay.style.transition = "opacity 0.4s ease"; 
 
@@ -275,43 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 p.style = "";
             });
 
-            // 紧贴在核心节点之后插入以实现 z-index 覆盖上方
             coreShadowGroup.insertBefore(overlay, el.nextSibling);
-            el._textureOverlay = overlay; // 绑到元素本身方便后续调节不透明度
+            el._textureOverlay = overlay;
         });
-    }
-
-    function addViewportEdgeMask(svgElement) {
-        const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
-        const width = vb && vb.width ? vb.width : 757.5;
-        const height = vb && vb.height ? vb.height : 821;
-        const thickness = 2.5;
-        const bgColor = getComputedStyle(document.documentElement)
-            .getPropertyValue("--bg-color")
-            .trim() || "#F4F4F0";
-
-        const maskGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        maskGroup.setAttribute("id", "viewport-edge-mask");
-        maskGroup.setAttribute("pointer-events", "none");
-
-        const rectDefs = [
-            { x: -thickness, y: -thickness, width: width + thickness * 2, height: thickness * 2 },
-            { x: -thickness, y: height - thickness, width: width + thickness * 2, height: thickness * 2 },
-            { x: -thickness, y: -thickness, width: thickness * 2, height: height + thickness * 2 },
-            { x: width - thickness, y: -thickness, width: thickness * 2, height: height + thickness * 2 }
-        ];
-
-        rectDefs.forEach(def => {
-            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute("x", def.x);
-            rect.setAttribute("y", def.y);
-            rect.setAttribute("width", def.width);
-            rect.setAttribute("height", def.height);
-            rect.setAttribute("fill", bgColor);
-            maskGroup.appendChild(rect);
-        });
-
-        svgElement.appendChild(maskGroup);
     }
 
     window.focusCountyOnMap = function(id) {
@@ -331,10 +467,8 @@ document.addEventListener("DOMContentLoaded", () => {
             svgWrapper.style.transform = transformString;
             svgWrapper.classList.add("is-focused");
             
-            // 为遮挡条应用反向的transform，使其不跟随SVG的3D变换
             const maskGroup = svgWrapper.querySelector('#viewport-edge-mask');
             if (maskGroup) {
-                // 反向应用transform以抵消SVG的变换：缩放反向、旋转反向、平移反向
                 maskGroup.style.transform = `translateX(${-moveX - 24}vh) translateY(${-moveY + 15}vh) scale(0.8695652) rotateZ(3deg) rotateX(-48deg)`;
                 maskGroup.style.transformOrigin = "center";
             }
@@ -356,7 +490,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const originalIntroText = introSection.innerHTML;
         let introHoverTimeout;
 
-        // 关闭按钮逻辑
         closeBtn.addEventListener("click", () => {
             infoCard.classList.add("hidden");
             introSection.classList.remove("hidden");
@@ -366,7 +499,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.closeSubMenu();
             }
             
-            // 恢复所有区域样式
             Object.keys(coreRegionsConfig).forEach(id => {
                 const el = document.getElementById(id);
                 if(el) { 
@@ -374,21 +506,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (el._textureOverlay) el._textureOverlay.style.opacity = '0.4';
                 }
             });
-            // 恢复试图缩放与3D倾斜设置
-            // 为了维持高清抗锯齿，基础缩放值配合 CSS 修改为了 0.5
             svgWrapper.style.transform = "perspective(1200px) rotateX(0deg) rotateZ(0deg) scale(0.5) translate(0, 0)";
             
-            // 重置遮挡条的transform
             const maskGroup = svgWrapper.querySelector('#viewport-edge-mask');
             if (maskGroup) {
                 maskGroup.style.transform = "none";
             }
         });
 
-        // 地区元素的事件处理
         Object.keys(coreRegionsConfig).forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
+
+            el.addEventListener("mouseover", () => {
+                if (!infoCard.classList.contains("hidden")) return;
+                clearTimeout(introHoverTimeout);
+                const countyData = huizhouData[id];
+                if (countyData && introSection) {
+                    introSection.classList.remove("fade-out");
+                    introSection.innerHTML = "<p>" + countyData.desc + "</p>";
+                }
+            });
 
             el.addEventListener("mouseleave", () => {
                 if (infoCard.classList.contains("hidden")) {
@@ -404,16 +542,13 @@ document.addEventListener("DOMContentLoaded", () => {
             el.addEventListener("click", (e) => {
                 const isCardVisible = !infoCard.classList.contains("hidden");
 
-                // 1. 隐藏切换
                 introSection.classList.add("hidden");
                 svgWrapper.classList.add("is-focused");
 
-                // 初始化左上方选择栏子菜单
                 if (window.openSubMenuForCounty) {
                     window.openSubMenuForCounty(id);
                 }
 
-                // 2. 平滑过渡与信息卡更新
                 if (isCardVisible) {
                     infoCard.classList.add("hidden");
                     setTimeout(() => {
@@ -423,98 +558,107 @@ document.addEventListener("DOMContentLoaded", () => {
                     updateCardInfoAsync(id).then(() => infoCard.classList.remove("hidden"));
                 }
 
-                // 3. 产生极其精细的 3D 视图与追踪聚焦
                 window.focusCountyOnMap(id);
             });
         });
     }
 
     window.showArchCardInfo = function(id, countyId) { 
-    const metaList = bgArchData[countyId];
-    const meta = metaList.find(i => i.id === id);
-    if(!meta) return;
+        const metaList = bgArchData[countyId];
+        const meta = metaList.find(i => i.id === id);
+        if(!meta) return;
 
-    if (window.focusCountyOnMap) window.focusCountyOnMap(countyId);
+        // 保存当前正在查看的建筑所在的县，以便hover时恢复
+        window.currentViewingCounty = countyId;
 
-    const introSection = document.getElementById("intro-section");
-    const infoCard = document.getElementById("info-card");
-    const isCardVisible = !infoCard.classList.contains("hidden");
+        if (window.focusCountyOnMap) window.focusCountyOnMap(countyId);
 
-    introSection.classList.add("hidden");
+        const introSection = document.getElementById("intro-section");
+        const infoCard = document.getElementById("info-card");
+        const isCardVisible = !infoCard.classList.contains("hidden");
 
-    let imgPromise = Promise.resolve('');
-    if (meta.image) {
-        imgPromise = new Promise(resolve => {
-            processTransparentLineArt(meta.image, resolve);
+        introSection.classList.add("hidden");
+
+        let imgPromise = Promise.resolve('');
+        if (meta.image) {
+            // 先检查缓存中是否有预加载好的图片
+            if (architectureImageCache[id]) {
+                imgPromise = Promise.resolve(architectureImageCache[id]);
+            } else {
+                // 否则实时处理（用于超出前6个的建筑）
+                imgPromise = new Promise(resolve => {
+                    processTransparentLineArt(meta.image, resolve);
+                });
+            }
+        }
+
+        const performUpdateAndShow = (dataUrl) => {
+            document.getElementById("card-county-seal").src = "./seal/" + countyId + ".png";
+            document.getElementById("card-title").textContent = meta.name;
+            document.getElementById("card-subtitle").textContent = "[" + coreRegionsConfig[countyId].name + "] " + meta.typeName;
+            const descEl = document.getElementById("card-desc");
+            if(descEl) descEl.innerHTML = "正在加载描述...";
+            if(meta.markdown) {
+                fetch(meta.markdown).then(r => r.text()).then(md => {
+                    const html = window.marked ? window.marked.parse(md) : md;      
+                    if(descEl) descEl.innerHTML = html;
+                }).catch(e => {
+                    if(descEl) descEl.innerHTML = "加载失败";
+                });
+            }
+
+            const placeholder = document.querySelector(".card-image-placeholder");  
+            if(placeholder) {
+                placeholder.style.height = '';
+                placeholder.style.background = '';
+                placeholder.style.overflow = '';
+                if(dataUrl) {
+                    placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; max-height:300px; object-fit:contain;"/>';
+                } else {
+                    placeholder.innerHTML = '<div class="placeholder-ink-graphic"><svg viewBox="0 0 100 100" class="ink-icon"><path d="M10 80 L50 20 L90 80 Z" fill="none" stroke="#666" stroke-width="2"/></svg><span>暂无建筑线稿</span></div>';
+                }
+            }
+            infoCard.classList.remove("hidden");
+        };
+
+        if (isCardVisible) {
+            infoCard.classList.add("hidden");
+            Promise.all([imgPromise, new Promise(r => setTimeout(r, 350))]).then(([dataUrl]) => performUpdateAndShow(dataUrl));
+        } else {
+            imgPromise.then(dataUrl => performUpdateAndShow(dataUrl));
+        }
+    }
+
+
+    function updateCardInfoAsync(id) {
+        return new Promise(resolve => {
+            const data = huizhouData[id];
+            if(!data) return resolve();
+
+            document.getElementById("card-county-seal").src = './seal/' + id + '.png';
+            document.getElementById("card-title").textContent = data.title;
+            document.getElementById("card-subtitle").textContent = data.subtitle;   
+            document.getElementById("card-desc").textContent = data.desc;
+
+            const placeholder = document.querySelector(".card-image-placeholder");  
+            if(placeholder) {
+                placeholder.style.height = 'auto';
+                placeholder.style.background = 'transparent';
+                placeholder.style.overflow = 'visible';
+                // 初始状态为空，等待图片加载完成后再显示
+                placeholder.innerHTML = '';
+                
+                processTransparentLineArt('./county/' + id + '.png', (dataUrl) => {    
+                    placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; height:auto; display:block; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);"/>';
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
         });
     }
 
-    const performUpdateAndShow = (dataUrl) => {
-        document.getElementById("card-county-seal").src = "./seal/" + countyId + ".png";
-        document.getElementById("card-title").textContent = meta.name;
-        document.getElementById("card-subtitle").textContent = "[" + coreRegionsConfig[countyId].name + "] " + meta.typeName;
-        const descEl = document.getElementById("card-desc");
-        if(descEl) descEl.innerHTML = "正在加载描述...";
-        if(meta.markdown) {
-            fetch(meta.markdown).then(r => r.text()).then(md => {
-                const html = window.marked ? window.marked.parse(md) : md;      
-                if(descEl) descEl.innerHTML = html;
-            }).catch(e => {
-                if(descEl) descEl.innerHTML = "加载失败";
-            });
-        }
-
-        const placeholder = document.querySelector(".card-image-placeholder");  
-        if(placeholder) {
-            placeholder.style.height = '';
-            placeholder.style.background = '';
-            placeholder.style.overflow = '';
-            if(dataUrl) {
-                placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; max-height:300px; object-fit:contain;"/>';
-            } else {
-                placeholder.innerHTML = '<div class="placeholder-ink-graphic"><svg viewBox="0 0 100 100" class="ink-icon"><path d="M10 80 L50 20 L90 80 Z" fill="none" stroke="#666" stroke-width="2"/></svg><span>暂无建筑线稿</span></div>';
-            }
-        }
-        infoCard.classList.remove("hidden");
-    };
-
-    if (isCardVisible) {
-        infoCard.classList.add("hidden");
-        Promise.all([imgPromise, new Promise(r => setTimeout(r, 350))]).then(([dataUrl]) => performUpdateAndShow(dataUrl));
-    } else {
-        imgPromise.then(dataUrl => performUpdateAndShow(dataUrl));
-    }
-}
-
-      function processTransparentLineArt(imgSrc, callback) { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { try { const canvas = document.createElement("canvas"); canvas.width = img.width; canvas.height = img.height; const ctx = canvas.getContext("2d"); ctx.drawImage(img, 0, 0); const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); const data = imgData.data; for (let i = 0; i < data.length; i += 4) { const r = data[i], g = data[i+1], b = data[i+2]; if (r > 200 && g > 200 && b > 200) { data[i+3] = 0; } } ctx.putImageData(imgData, 0, 0); callback(canvas.toDataURL("image/png")); } catch(e) { callback(imgSrc); } }; img.onerror = () => callback(imgSrc); img.src = imgSrc; }
-
-      function updateCardInfoAsync(id) {
-    return new Promise(resolve => {
-        const data = huizhouData[id];
-        if(!data) return resolve();
-
-        document.getElementById("card-county-seal").src = './seal/' + id + '.png';
-        document.getElementById("card-title").textContent = data.title;
-        document.getElementById("card-subtitle").textContent = data.subtitle;   
-        document.getElementById("card-desc").textContent = data.desc;
-
-        const placeholder = document.querySelector(".card-image-placeholder");  
-        if(placeholder) {
-            placeholder.style.height = 'auto';
-            placeholder.style.background = 'transparent';
-            placeholder.style.overflow = 'visible';
-            
-            processTransparentLineArt('./county/' + id + '.png', (dataUrl) => {    
-                placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; height:auto; display:block; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);"/>';
-                resolve();
-            });
-        } else {
-            resolve();
-        }
-    });
-}
     function generateLabels(svgElement) {
-        // 首先绘制背景地名，不抢核心地界风头
         Object.keys(contextRegionsConfig).forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -528,11 +672,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const textHTML = `<text x="${x}" y="${y}" class="context-text svg-label" text-anchor="middle" dominant-baseline="central">${contextRegionsConfig[id].name}</text>`;
-            // 将周边地名的标注放在最后，避免被地块的 fill 遮挡
             svgElement.insertAdjacentHTML('beforeend', textHTML); 
         });
 
-        // 绘制一府六县地名
         Object.keys(coreRegionsConfig).forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -540,7 +682,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             let x = bbox.x + bbox.width / 2;
             let y = bbox.y + bbox.height / 2;
-            // 微调祁门位置
             if (id === 'qimen') {
                 x += 20;
                 y += 10;
@@ -548,36 +689,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const textHTML = `<text x="${x}" y="${y}" class="core-text svg-label" text-anchor="middle" dominant-baseline="central">${coreRegionsConfig[id].name}</text>`;
             svgElement.insertAdjacentHTML('beforeend', textHTML);   
-
         });
     }
 
     function generateArchPoints(svgElement) {
-    const archHtmlLayer = document.getElementById("html-arch-layer");
-    const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
-    const viewBoxW = vb && vb.width ? vb.width : 757.5;
-    const viewBoxH = vb && vb.height ? vb.height : 821;
-    Object.keys(coreRegionsConfig).forEach(countyId => {
-        const pathEl = document.getElementById(countyId);
-        if(!pathEl) return;
-        if (!bgArchData[countyId]) return;
-        bgArchData[countyId].forEach(ptMeta => {
+        const archHtmlLayer = document.getElementById("html-arch-layer");
+        const vb = svgElement.viewBox && svgElement.viewBox.baseVal;
+        const viewBoxW = vb && vb.width ? vb.width : 757.5;
+        const viewBoxH = vb && vb.height ? vb.height : 821;
+        
+        // 按坐标分组
+        const pointsByCoord = {};
+        
+        Object.keys(coreRegionsConfig).forEach(countyId => {
+            if (!bgArchData[countyId]) return;
+            bgArchData[countyId].forEach(ptMeta => {
+                const point = {
+                    ...ptMeta,
+                    countyId: countyId
+                };
+                const key = `${ptMeta.x},${ptMeta.y}`;
+                if (!pointsByCoord[key]) {
+                    pointsByCoord[key] = [];
+                }
+                pointsByCoord[key].push(point);
+            });
+        });
+        
+        // 为每个坐标创建容器
+        Object.entries(pointsByCoord).forEach(([coord, items]) => {
+            const [x, y] = coord.split(',').map(Number);
             const baseSize = 40;
-            const div = document.createElement("div");
-            let iconUrl = "./icon/dwelling.svg"; 
-            const catInfo = archCategories.find(c => c.type === ptMeta.type || c.name === ptMeta.type || c.name === ptMeta.typeName || c.type === ptMeta.typeName);
+            const isMultiple = items.length > 1;
+            
+            const firstItem = items[0];
+            let iconUrl = "./icon/dwelling.svg";
+            const catInfo = archCategories.find(c => c.type === firstItem.type || c.name === firstItem.type);
             if (catInfo && catInfo.icon) iconUrl = catInfo.icon;
             
-            div.style.backgroundImage = "url(" + iconUrl + ")";
+            const div = document.createElement("div");
+            div.style.backgroundImage = `url(${iconUrl})`;
             div.style.backgroundSize = "contain";
             div.style.backgroundRepeat = "no-repeat";
             div.style.backgroundPosition = "bottom center";
-            const classType = catInfo ? catInfo.type : ptMeta.type;
-            div.className = "arch-pt " + countyId + " " + classType;
-            div.setAttribute("data-id", ptMeta.id);
-            div.setAttribute("data-county", countyId);
-            const leftPercent = (ptMeta.x / viewBoxW) * 100;
-            const topPercent = (ptMeta.y / viewBoxH) * 100;
+            
+            const classType = catInfo ? catInfo.type : firstItem.type;
+            div.className = `arch-pt ${firstItem.countyId} ${classType}`;
+            div.setAttribute("data-coord", coord);
+            div.setAttribute("data-count", items.length);
+            div._pointsData = items;
+            
+            // 多点：添加角标
+            if (isMultiple) {
+                div.classList.add("multi-point");
+                const badge = document.createElement("span");
+                badge.className = "point-badge";
+                badge.textContent = items.length;
+                div.appendChild(badge);
+            }
+            
+            // 定位
+            const leftPercent = (x / viewBoxW) * 100;
+            const topPercent = (y / viewBoxH) * 100;
             div.style.position = "absolute";
             div.style.left = leftPercent + "%";
             div.style.top = topPercent + "%";
@@ -587,13 +760,98 @@ document.addEventListener("DOMContentLoaded", () => {
             div.style.marginLeft = "-" + (baseSize / 2) + "px";
             div.style.marginTop = "-" + baseSize + "px";
             div.style.display = "block";
-            div.addEventListener("click", function(e) { e.stopPropagation(); window.showArchCardInfo(ptMeta.id, countyId); });
+            div.style.cursor = "pointer";
+            
+            // 单个点：点击事件
+            if (!isMultiple) {
+                div.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const points = this._pointsData;
+                    window.showArchCardInfo(points[0].id, points[0].countyId);
+                });
+            } else {
+                // 多个点：hover 悬浮菜单（离开自动消失）
+                let hoverTimeout;
+                let menuElement = null;
+                
+                const showMenu = () => {
+                    if (hoverTimeout) clearTimeout(hoverTimeout);
+                    if (menuElement) {
+                        menuElement.remove();
+                        menuElement = null;
+                    }
+                    
+                    menuElement = createHoverMenu(items);
+                    document.body.appendChild(menuElement);
+                    
+                    const rect = div.getBoundingClientRect();
+                    menuElement.style.left = rect.left + rect.width / 2 + "px";
+                    menuElement.style.top = rect.top - 10 + "px";
+                    menuElement.style.transform = "translateX(-50%) translateY(-100%)";
+                    menuElement.style.opacity = "1";
+                    menuElement.style.visibility = "visible";
+                    
+                    menuElement.addEventListener("mouseenter", () => {
+                        if (hoverTimeout) clearTimeout(hoverTimeout);
+                    });
+                    
+                    menuElement.addEventListener("mouseleave", () => {
+                        hideMenu();
+                    });
+                };
+                
+                const hideMenu = () => {
+                    if (hoverTimeout) clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        if (menuElement) {
+                            menuElement.remove();
+                            menuElement = null;
+                        }
+                    }, 200);
+                };
+                
+                div.addEventListener("mouseenter", showMenu);
+                div.addEventListener("mouseleave", hideMenu);
+            }
+            
             archHtmlLayer.appendChild(div);
         });
-    });
-}
+    }
 
-function setupSubMenu() {
+    // 创建 hover 悬浮菜单（离开自动消失）
+    function createHoverMenu(items) {
+        const menu = document.createElement("div");
+        menu.className = "arch-hover-menu";
+        
+        items.forEach(item => {
+            const menuItem = document.createElement("div");
+            menuItem.className = "hover-menu-item";
+            
+            let iconUrl = "./icon/dwelling.svg";
+            const catInfo = archCategories.find(c => c.type === item.type || c.name === item.type);
+            if (catInfo && catInfo.icon) iconUrl = catInfo.icon;
+            
+            menuItem.innerHTML = `
+                <img src="${iconUrl}" class="hover-menu-icon" />
+                <div class="hover-menu-info">
+                    <div class="hover-menu-name">${item.name}</div>
+                    <div class="hover-menu-type">${item.typeName}</div>
+                </div>
+            `;
+            
+            menuItem.addEventListener("click", (e) => {
+                e.stopPropagation();
+                window.showArchCardInfo(item.id, item.countyId);
+                menu.remove();
+            });
+            
+            menu.appendChild(menuItem);
+        });
+        
+        return menu;
+    }
+
+    function setupSubMenu() {
         const tabs = document.querySelectorAll(".nav-tabs button");
         const subNavPanel = document.getElementById("sub-nav-panel");
         const subNavClose = document.getElementById("sub-nav-close");
@@ -615,11 +873,11 @@ function setupSubMenu() {
         window.closeSubMenu = function() {
             if(subNavPanel) subNavPanel.classList.remove("active");
             window.currentFocusCounty = null;
-            // 回归一级图鉴时，根据当前顶部的 tab 筛选
             const activeTab = document.querySelector(".nav-tabs button.active");
             let _type = "all";
             if (activeTab) _type = activeTab.getAttribute("data-type");
 
+            // 闭包sub-nav-panel时，应用当前tab的过滤
             document.querySelectorAll(".arch-pt").forEach(pt => {
                 if (_type === "all" || pt.classList.contains(_type)) {
                     pt.style.display = "block";
@@ -637,64 +895,76 @@ function setupSubMenu() {
 
         let isSubNavListBuilt = false;
         tabs.forEach(tab => {
-        tab.addEventListener("click", function(e) {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-            const type = tab.getAttribute("data-type");
+            tab.addEventListener("click", function(e) {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                const type = tab.getAttribute("data-type");
 
-            if (window.currentFocusCounty) {
-                subNavPanel.classList.add("active");
-                if (!isSubNavListBuilt) {
-                    isSubNavListBuilt = true;
-                    let list = Object.values(bgArchData).flat();
-                    subNavTitle.textContent = "营造图鉴";
-                    subNavList.innerHTML = "";
-                    list.forEach(item => {
-                        const li = document.createElement("li");
-                        let imgHtml = item.image ? "<img class='art-preview' src='" + item.image + "' alt=''/> " : "";
-                        li.innerHTML = imgHtml + "<div class='art-title'>" + item.name + "</div>";
-                        li.setAttribute("data-type", item.type);
-                        if (item.image) { processTransparentLineArt(item.image, (dataUrl) => { const imgEl = li.querySelector(".art-preview"); if(imgEl) imgEl.src = dataUrl; }); }
-                        li.addEventListener("mouseenter", () => highlightPoint(item.id));
-                        li.addEventListener("mouseleave", () => unhighlightPoint(item.id));
-                        li.addEventListener("click", (e) => {
-                            e.stopPropagation();
-                            window.showArchCardInfo(item.id, item.county);
+                if (window.currentFocusCounty) {
+                    subNavPanel.classList.add("active");
+                    if (!isSubNavListBuilt) {
+                        isSubNavListBuilt = true;
+                        let list = Object.values(bgArchData).flat();
+                        subNavTitle.textContent = "营造图鉴";
+                        subNavList.innerHTML = "";
+                        list.forEach(item => {
+                            const li = document.createElement("li");
+                            let imgHtml = item.image ? "<img class='art-preview' src='" + item.image + "' alt=''/> " : "";
+                            li.innerHTML = imgHtml + "<div class='art-title'>" + item.name + "</div>";
+                            li.setAttribute("data-type", item.type);
+                            if (item.image) { processTransparentLineArt(item.image, (dataUrl) => { const imgEl = li.querySelector(".art-preview"); if(imgEl) imgEl.src = dataUrl; }); }
+                            li.addEventListener("mouseenter", () => highlightPoint(item.id));
+                            li.addEventListener("mouseleave", () => unhighlightPoint(item.id));
+                            li.addEventListener("mouseover", () => {
+                                // 在sub-nav-panel hover到建筑时，同时放大建筑点并聚焦到该建筑所在县
+                                highlightPoint(item.id);
+                                if (window.focusCountyOnMap) window.focusCountyOnMap(item.county);
+                            });
+                            li.addEventListener("mouseout", () => {
+                                // 离开时取消放大，并恢复到当前正在查看的建筑所在县（如果有的话）
+                                unhighlightPoint(item.id);
+                                if (window.currentViewingCounty && window.focusCountyOnMap) {
+                                    window.focusCountyOnMap(window.currentViewingCounty);
+                                } else if (window.currentFocusCounty && window.focusCountyOnMap) {
+                                    window.focusCountyOnMap(window.currentFocusCounty);
+                                }
+                            });
+                            li.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                window.showArchCardInfo(item.id, item.county);
+                            });
+                            subNavList.appendChild(li);
                         });
-                        subNavList.appendChild(li);
-                    });
-                }
-                
-                // Hide items in the subnav list based on type
-                Array.from(subNavList.children).forEach(li => {
-                    if (type === "all" || li.getAttribute("data-type") === type) {
-                        li.style.display = "flex";
-                    } else {
-                        li.style.display = "none";
                     }
-                });
+                    
+                    Array.from(subNavList.children).forEach(li => {
+                        if (type === "all" || li.getAttribute("data-type") === type) {
+                            li.style.display = "flex";
+                        } else {
+                            li.style.display = "none";
+                        }
+                    });
 
-                document.querySelectorAll(".arch-pt").forEach(pt => {
-                    if (pt.classList.contains(window.currentFocusCounty)) {     
+                    // 显示所有地区的建筑点，仅按类型过滤
+                    document.querySelectorAll(".arch-pt").forEach(pt => {
                         if (type === "all" || pt.classList.contains(type)) {    
                             pt.style.display = "block";
                         } else {
                             pt.style.display = "none";
                         }
-                    } else {
-                        pt.style.display = "none";
-                    }
-                });
-                document.querySelectorAll(".arch-pt").forEach(pt => {
-                    if (type === "all" || pt.classList.contains(type)) {
-                        pt.style.display = "block";
-                    } else {
-                        pt.style.display = "none";
-                    }
-                });
-            }
+                    });
+                } else {
+                    // sub-nav-panel未打开时，也要按类型过滤但显示所有地区建筑
+                    document.querySelectorAll(".arch-pt").forEach(pt => {
+                        if (type === "all" || pt.classList.contains(type)) {
+                            pt.style.display = "block";
+                        } else {
+                            pt.style.display = "none";
+                        }
+                    });
+                }
+            });
         });
-    });
     }
 
     function setupTooltips() {
@@ -703,21 +973,17 @@ function setupSubMenu() {
         if(!tooltip || !svgWrapper) return;
         
         svgWrapper.addEventListener("mousemove", (e) => {
-            // Note: SVG events trigger on the DOM element within the SVG namespace
             if(e.target.classList && e.target.classList.contains("arch-pt")) {
-                const id = e.target.getAttribute("data-id");
-                let meta;
-                for(let c in bgArchData) {
-                    meta = bgArchData[c].find(i => i.id === id);
-                    if(meta) break;
-                }
-                if(meta) {
-                    tooltip.textContent = meta.name;
+                const points = e.target._pointsData;
+                if(points && points.length === 1) {
+                    tooltip.textContent = points[0].name;
                     tooltip.classList.remove("hidden");
                     tooltip.classList.add("visible");
-                    
                     tooltip.style.left = `${e.clientX}px`;
                     tooltip.style.top = `${e.clientY - 15}px`;
+                } else {
+                    tooltip.classList.add("hidden");
+                    tooltip.classList.remove("visible");
                 }
             } else {
                 tooltip.classList.add("hidden");
