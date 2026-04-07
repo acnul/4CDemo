@@ -36,9 +36,6 @@ const bgDecorationConfig = {
     baseHeight: 900
 };
 
-// 建筑图片缓存：存储已处理的透明PNG数据
-const architectureImageCache = {};
-
 // 预构件数据
 const huizhouData = {
     "shexian": { 
@@ -82,33 +79,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const svgWrapInitial = document.getElementById("svg-wrapper");
     if(svgWrapInitial) svgWrapInitial.classList.add("initial-enter");
 
-    // ========== 处理透明线稿图片（白色背景转透明） ==========
-    function processTransparentLineArt(imgSrc, callback) { 
-        const img = new Image(); 
-        img.crossOrigin = "Anonymous"; 
-        img.onload = () => { 
-            try { 
-                const canvas = document.createElement("canvas"); 
-                canvas.width = img.width; 
-                canvas.height = img.height; 
-                const ctx = canvas.getContext("2d"); 
-                ctx.drawImage(img, 0, 0); 
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
-                const data = imgData.data; 
-                for (let i = 0; i < data.length; i += 4) { 
-                    const r = data[i], g = data[i+1], b = data[i+2]; 
-                    if (r > 200 && g > 200 && b > 200) { 
-                        data[i+3] = 0; 
-                    } 
-                } 
-                ctx.putImageData(imgData, 0, 0); 
-                callback(canvas.toDataURL("image/png")); 
-            } catch(e) { 
-                callback(imgSrc); 
-            } 
-        }; 
-        img.onerror = () => callback(imgSrc); 
-        img.src = imgSrc; 
+    function loadImageSource(imgSrc) {
+        return new Promise(resolve => {
+            if (!imgSrc) {
+                resolve('');
+                return;
+            }
+
+            const img = new Image();
+            img.onload = () => resolve(imgSrc);
+            img.onerror = () => resolve('');
+            img.src = imgSrc;
+        });
+    }
+
+    function warmImageCache(imgSrc) {
+        if (!imgSrc) return;
+
+        const img = new Image();
+        img.src = imgSrc;
     }
 
     // ========== 预加载开屏装饰图片 ==========
@@ -294,11 +283,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const arch = allArchs[currentIndex];
                     currentIndex++;
                     
-                    if (arch.image && !architectureImageCache[arch.id]) {
-                        // 异步处理，不阻塞
-                        processTransparentLineArt(arch.image, (dataUrl) => {
-                            architectureImageCache[arch.id] = dataUrl;
-                        });
+                    if (arch.image) {
+                        warmImageCache(arch.image);
                     }
                     processed++;
                 }
@@ -579,20 +565,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         introSection.classList.add("hidden");
 
-        let imgPromise = Promise.resolve('');
-        if (meta.image) {
-            // 先检查缓存中是否有预加载好的图片
-            if (architectureImageCache[id]) {
-                imgPromise = Promise.resolve(architectureImageCache[id]);
-            } else {
-                // 否则实时处理（用于超出前6个的建筑）
-                imgPromise = new Promise(resolve => {
-                    processTransparentLineArt(meta.image, resolve);
-                });
-            }
-        }
+        const imgPromise = meta.image ? loadImageSource(meta.image) : Promise.resolve('');
 
-        const performUpdateAndShow = (dataUrl) => {
+        const performUpdateAndShow = (imgSrc) => {
             document.getElementById("card-county-seal").src = "./seal/" + countyId + ".png";
             document.getElementById("card-title").textContent = meta.name;
             document.getElementById("card-subtitle").textContent = "[" + coreRegionsConfig[countyId].name + "] " + meta.typeName;
@@ -612,8 +587,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 placeholder.style.height = '';
                 placeholder.style.background = '';
                 placeholder.style.overflow = '';
-                if(dataUrl) {
-                    placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; max-height:300px; object-fit:contain;"/>';
+                if(imgSrc) {
+                    placeholder.innerHTML = '<img id="card-main-image" src="' + imgSrc + '" style="width:100%; max-height:300px; object-fit:contain;"/>';
                 } else {
                     placeholder.innerHTML = '<div class="placeholder-ink-graphic"><svg viewBox="0 0 100 100" class="ink-icon"><path d="M10 80 L50 20 L90 80 Z" fill="none" stroke="#666" stroke-width="2"/></svg><span>暂无建筑线稿</span></div>';
                 }
@@ -623,9 +598,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isCardVisible) {
             infoCard.classList.add("hidden");
-            Promise.all([imgPromise, new Promise(r => setTimeout(r, 350))]).then(([dataUrl]) => performUpdateAndShow(dataUrl));
+            Promise.all([imgPromise, new Promise(r => setTimeout(r, 350))]).then(([imgSrc]) => performUpdateAndShow(imgSrc));
         } else {
-            imgPromise.then(dataUrl => performUpdateAndShow(dataUrl));
+            imgPromise.then(imgSrc => performUpdateAndShow(imgSrc));
         }
     }
 
@@ -648,8 +623,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // 初始状态为空，等待图片加载完成后再显示
                 placeholder.innerHTML = '';
                 
-                processTransparentLineArt('./county/' + id + '.png', (dataUrl) => {    
-                    placeholder.innerHTML = '<img id="card-main-image" src="' + dataUrl + '" style="width:100%; height:auto; display:block; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);"/>';
+                loadImageSource('./county/' + id + '.png').then(imgSrc => {
+                    if (imgSrc) {
+                        placeholder.innerHTML = '<img id="card-main-image" src="' + imgSrc + '" style="width:100%; height:auto; display:block; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);"/>';
+                    } else {
+                        placeholder.innerHTML = '<div class="placeholder-ink-graphic"><svg viewBox="0 0 100 100" class="ink-icon"><path d="M10 80 L50 20 L90 80 Z" fill="none" stroke="#666" stroke-width="2"/></svg><span>暂无县域图</span></div>';
+                    }
                     resolve();
                 });
             } else {
@@ -912,7 +891,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             let imgHtml = item.image ? "<img class='art-preview' src='" + item.image + "' alt=''/> " : "";
                             li.innerHTML = imgHtml + "<div class='art-title'>" + item.name + "</div>";
                             li.setAttribute("data-type", item.type);
-                            if (item.image) { processTransparentLineArt(item.image, (dataUrl) => { const imgEl = li.querySelector(".art-preview"); if(imgEl) imgEl.src = dataUrl; }); }
                             li.addEventListener("mouseenter", () => highlightPoint(item.id));
                             li.addEventListener("mouseleave", () => unhighlightPoint(item.id));
                             li.addEventListener("mouseover", () => {
